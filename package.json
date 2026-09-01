@@ -1,0 +1,33 @@
+{
+  "name": "iamfriendof",
+  "version": "0.1.0",
+  "private": true,
+  "description": "IamFriendof volunteer network - Phase 0 no-cost modular monolith",
+  "workspaces": [
+    "packages/*",
+    "services/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "tsc --build",
+    "typecheck": "tsc --build --noEmit",
+    "test": "jest",
+    "test:integration": "jest --config tests/integration/jest.config.js",
+    "dev": "tsx watch apps/web/src/main.ts",
+    "start": "node apps/web/dist/main.js",
+    "lint": "eslint . --ext .ts",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.14.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.0",
+    "tsx": "^4.16.0",
+    "typescript": "^5.5.0",
+    "fast-check": "^3.19.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

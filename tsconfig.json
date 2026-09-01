@@ -1,0 +1,17 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/shared" },
+    { "path": "services/registration" },
+    { "path": "services/authentication" },
+    { "path": "services/profile" },
+    { "path": "services/interest" },
+    { "path": "services/media" },
+    { "path": "services/comment" },
+    { "path": "services/event" },
+    { "path": "services/pm-rating" },
+    { "path": "services/notification" },
+    { "path": "services/search" },
+    { "path": "apps/web" }
+  ]
+}

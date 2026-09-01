@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "lib": ["ES2022", "WebWorker"],
+    "types": ["node", "@cloudflare/workers-types"]
+  },
+  "references": [
+    { "path": "../../packages/shared" },
+    { "path": "../../services/registration" },
+    { "path": "../../services/authentication" },
+    { "path": "../../services/profile" },
+    { "path": "../../services/interest" },
+    { "path": "../../services/media" },
+    { "path": "../../services/comment" },
+    { "path": "../../services/event" },
+    { "path": "../../services/pm-rating" },
+    { "path": "../../services/notification" },
+    { "path": "../../services/search" }
+  ],
+  "include": ["src/**/*"],
+  "exclude": ["**/*.test.ts", "**/*.spec.ts", "dist"]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@iamfriendof/web",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc --build",
+    "dev": "tsx watch src/main.ts",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@iamfriendof/shared": "*"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240605.0"
+  }
+}
