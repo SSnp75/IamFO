@@ -14,6 +14,15 @@ import { loadConfig, type EnvBag, type AppConfig } from './config';
 import { Router, json, errorResponse, type RequestContext } from './http/router';
 import { createModules, type ModuleDeps } from './modules';
 import { migrate } from './bootstrap';
+import { INDEX_HTML, STYLES_CSS, APP_JS } from './static/assets';
+
+/** Static frontend assets served for non-API GET routes. */
+const STATIC_ASSETS: Record<string, { body: string; contentType: string }> = {
+  '/': { body: INDEX_HTML, contentType: 'text/html; charset=utf-8' },
+  '/index.html': { body: INDEX_HTML, contentType: 'text/html; charset=utf-8' },
+  '/styles.css': { body: STYLES_CSS, contentType: 'text/css; charset=utf-8' },
+  '/app.js': { body: APP_JS, contentType: 'application/javascript; charset=utf-8' },
+};
 
 /** Everything the request handler needs, assembled once per worker instance. */
 export interface App {
@@ -88,7 +97,19 @@ export function createApp(env: EnvBag, overrides: AppOverrides = {}): App {
         );
       }
 
-      // 2. Route match.
+      // 2. Static frontend: serve embedded assets for GET requests that are not
+      //    API routes. API paths are checked first so they always win.
+      if (req.method === 'GET' && !router.match('GET', url.pathname)) {
+        const asset = STATIC_ASSETS[url.pathname];
+        if (asset) {
+          return new Response(asset.body, {
+            status: 200,
+            headers: { 'content-type': asset.contentType, 'x-correlation-id': correlationId },
+          });
+        }
+      }
+
+      // 3. Route match.
       const matched = router.match(req.method, url.pathname);
       if (!matched) {
         throw new AppError(ERROR_CODES.NOT_FOUND, 'Resource not found', 404);
@@ -96,7 +117,7 @@ export function createApp(env: EnvBag, overrides: AppOverrides = {}): App {
 
       const ctx: RequestContext = { correlationId, params: matched.params, url };
 
-      // 3. Auth for protected routes: verify JWT signature + expiry AND confirm
+      // 4. Auth for protected routes: verify JWT signature + expiry AND confirm
       //    the session has not been revoked (logout / lock) via revoked_sessions.
       if (matched.route.auth) {
         const auth = req.headers.get('authorization') ?? '';
@@ -108,7 +129,7 @@ export function createApp(env: EnvBag, overrides: AppOverrides = {}): App {
         ctx.memberId = memberId;
       }
 
-      // 4. Dispatch.
+      // 5. Dispatch.
       return await matched.route.handler(req, ctx);
     } catch (err) {
       return errorResponse(err, correlationId);

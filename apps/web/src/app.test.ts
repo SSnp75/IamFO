@@ -89,6 +89,22 @@ describe('Phase 0 app request handling', () => {
     expect(res.headers.get('x-correlation-id')).toBe('corr-123');
   });
 
+  it('serves the frontend HTML at GET /', async () => {
+    const app = makeApp();
+    const res = await app.handle(new Request('http://localhost/'));
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('text/html');
+    const html = await res.text();
+    expect(html).toContain('IamFriendof');
+  });
+
+  it('serves the app.js asset', async () => {
+    const app = makeApp();
+    const res = await app.handle(new Request('http://localhost/app.js'));
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('javascript');
+  });
+
   it('rejects a revoked session at the gateway', async () => {
     const app = makeApp({}, fakeDb(true)); // revocation check returns true
     app.router.get('/protected', (_req, ctx) => new Response(ctx.memberId ?? ''), { auth: true });
